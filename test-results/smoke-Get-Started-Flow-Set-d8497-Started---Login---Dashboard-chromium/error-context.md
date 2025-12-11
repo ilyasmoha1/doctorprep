@@ -1,0 +1,102 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - button "previous" [disabled] [ref=e8]:
+              - img "previous" [ref=e9]
+            - generic [ref=e11]:
+              - generic [ref=e12]: 1/
+              - text: "1"
+            - button "next" [disabled] [ref=e13]:
+              - img "next" [ref=e14]
+          - img
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - img [ref=e18]
+            - generic "Latest available version is detected (16.0.8)." [ref=e20]: Next.js 16.0.8
+            - generic [ref=e21]: Turbopack
+          - img
+      - dialog "Runtime Error" [ref=e23]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - generic [ref=e30]: Runtime Error
+                - generic [ref=e31]: Server
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34]
+                - button "No related documentation found" [disabled] [ref=e36]:
+                  - img [ref=e37]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40]
+            - generic [ref=e49]: "Event handlers cannot be passed to Client Component props. <... className=... variant=\"outline\" onClick={function onClick} children=...> ^^^^^^^^^^^^^^^^^^ If you need interactivity, consider converting part of this to a Client Component."
+          - generic [ref=e51]:
+            - paragraph [ref=e53]:
+              - text: Call Stack
+              - generic [ref=e54]: "8"
+            - generic [ref=e55]:
+              - generic [ref=e56]: stringify
+              - text: <anonymous>
+            - generic [ref=e57]:
+              - generic [ref=e58]: stringify
+              - text: <anonymous>
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - text: resolveErrorDev
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e61] [cursor=pointer]:
+                  - img [ref=e62]
+              - text: file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js (1864:148)
+            - generic [ref=e64]:
+              - generic [ref=e65]:
+                - text: processFullStringRow
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e66] [cursor=pointer]:
+                  - img [ref=e67]
+              - text: file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js (2372:29)
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - text: processFullBinaryRow
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e71] [cursor=pointer]:
+                  - img [ref=e72]
+              - text: file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js (2331:9)
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - text: processBinaryChunk
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e76] [cursor=pointer]:
+                  - img [ref=e77]
+              - text: file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js (2441:98)
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - text: progress
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e81] [cursor=pointer]:
+                  - img [ref=e82]
+              - text: file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_9212ccad._.js (2610:13)
+            - generic [ref=e84]:
+              - generic [ref=e85]:
+                - text: Home
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e86] [cursor=pointer]:
+                  - img [ref=e87]
+              - text: about:/Server/file:///home/ilyas/Full%20Stack%20Web%20Dev/doctorprep/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__1cf34f48._.js (841:292)
+        - generic [ref=e89]: "1"
+        - generic [ref=e90]: "2"
+    - generic [ref=e95] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e96]:
+        - img [ref=e97]
+      - generic [ref=e100]:
+        - button "Open issues overlay" [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]: "0"
+            - generic [ref=e104]: "1"
+          - generic [ref=e105]: Issue
+        - button "Collapse issues badge" [ref=e106]:
+          - img [ref=e107]
+  - generic [ref=e110]:
+    - 'heading "Application error: a server-side exception has occurred while loading localhost (see the server logs for more information)." [level=2] [ref=e111]'
+    - paragraph [ref=e112]: "Digest: 2635162831"
+```

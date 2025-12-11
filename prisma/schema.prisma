@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(STUDENT)
+  plan          Plan      @default(FREE)
+  
+  progress      VideoProgress[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Video {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  duration      Int?     // Duration in seconds
+  
+  // Storage Keys
+  s3KeyRaw      String   // Where the raw file lived
+  hlsUrl        String?  // The .m3u8 link (e.g., https://cdn.doctorprep.com/videos/123/master.m3u8)
+  thumbnailUrl  String?
+  
+  // State
+  status        VideoStatus @default(PROCESSING)
+  isPublic      Boolean     @default(false) // If true, skip signed cookies
+  
+  // Relations
+  moduleId      String   @db.ObjectId
+  progress      VideoProgress[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model VideoProgress {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  videoId        String   @db.ObjectId
+  
+  // "Resume Playback" Logic
+  playedSeconds  Float    @default(0) 
+  isCompleted    Boolean  @default(false)
+  
+  updatedAt      DateTime @updatedAt // Used to sort "Recently Watched"
+
+  video          Video    @relation(fields: [videoId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, videoId])
+}
+
+enum VideoStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  PRO
+  INSTITUTIONAL
+}
