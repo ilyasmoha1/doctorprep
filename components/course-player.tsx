@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 
 // Dynamically import ReactPlayer to avoid SSR hydration mismatches
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
 
 interface CoursePlayerProps {
     videoUrl: string;
@@ -54,7 +54,7 @@ export function CoursePlayer({ videoUrl, videoId, initialProgress = 0 }: CourseP
                 width="100%"
                 height="100%"
                 // Start where they left off
-                onReady={(player) => {
+                onReady={(player: any) => {
                     if (initialProgress > 0) {
                         player.seekTo(initialProgress);
                     }

@@ -23,7 +23,7 @@ export function GetStartedButton({
     const { isAuthenticated, login } = useAuth();
     const router = useRouter();
 
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         import("@/lib/analytics").then(({ trackEvent }) => {
