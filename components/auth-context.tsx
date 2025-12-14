@@ -2,24 +2,38 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { studentStore } from "@/lib/student-store";
+
+type UserRole = "admin" | "student";
 
 interface User {
+    id?: number;
     name: string;
     email: string;
-    plan: "Free" | "Pro" | "Institutional";
+    role: UserRole;
+    plan?: "Free" | "Pro" | "Institutional";
 }
 
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: () => void;
+    login: (email: string, password: string) => { success: boolean; role?: UserRole; error?: string };
     logout: () => void;
     updateSettings: (settings: any) => void;
     settings: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Admin credentials
+const ADMIN = {
+    email: "admin@doctorprep.com",
+    password: "admin123",
+    name: "Admin User",
+    role: "admin" as UserRole,
+};
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -34,8 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        // Check localStorage on mount
-        const storedUser = localStorage.getItem("doctorprep_user");
+        // Check sessionStorage on mount
+        const storedUser = sessionStorage.getItem("doctorprep_user");
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
@@ -57,26 +71,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [settings.darkMode]);
 
-    const login = () => {
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            const mockUser: User = {
-                name: "Dr. Candidate",
-                email: "student@doctorprep.com",
-                plan: "Free",
+    const login = (email: string, password: string): { success: boolean; role?: UserRole; error?: string } => {
+        // Check admin credentials
+        if (email === ADMIN.email && password === ADMIN.password) {
+            const adminUser: User = {
+                name: ADMIN.name,
+                email: ADMIN.email,
+                role: ADMIN.role,
             };
-            setUser(mockUser);
-            localStorage.setItem("doctorprep_user", JSON.stringify(mockUser));
-            setIsLoading(false);
-            router.push("/dashboard");
-        }, 800);
+            setUser(adminUser);
+            sessionStorage.setItem("doctorprep_user", JSON.stringify(adminUser));
+            return { success: true, role: "admin" };
+        }
+
+        // Check student credentials against registered students
+        const student = studentStore.getByEmail(email);
+
+        if (!student) {
+            return {
+                success: false,
+                error: "Student not found. Please contact admin to register."
+            };
+        }
+
+        if (student.status !== "Active") {
+            return {
+                success: false,
+                error: "Your account is inactive. Please contact admin."
+            };
+        }
+
+        if (student.password === password) {
+            const studentUser: User = {
+                id: student.id,
+                name: student.name,
+                email: student.email,
+                role: "student",
+                plan: student.plan,
+            };
+            setUser(studentUser);
+            sessionStorage.setItem("doctorprep_user", JSON.stringify(studentUser));
+            return { success: true, role: "student" };
+        }
+
+        // Invalid password
+        return { success: false, error: "Invalid password" };
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem("doctorprep_user");
-        router.push("/");
+        sessionStorage.removeItem("doctorprep_user");
+        router.push("/login");
     };
 
     const updateSettings = (newSettings: any) => {

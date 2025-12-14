@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,13 +11,33 @@ import { useAuth } from "@/components/auth-context";
 
 export default function LoginPage() {
     const { login } = useAuth();
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = (e: FormEvent) => {
         e.preventDefault();
+        setError("");
         setLoading(true);
-        // AuthContext handles the delay and redirect
-        login();
+
+        // Simulate a small delay for better UX
+        setTimeout(() => {
+            const result = login(email, password);
+
+            if (result.success && result.role) {
+                // Redirect based on role
+                if (result.role === "admin") {
+                    router.push("/admin");
+                } else if (result.role === "student") {
+                    router.push("/dashboard");
+                }
+            } else {
+                setError(result.error || "Invalid email or password. Please try again.");
+                setLoading(false);
+            }
+        }, 500);
     };
 
     return (
@@ -29,7 +50,7 @@ export default function LoginPage() {
                     <div className="space-y-2">
                         <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
                         <CardDescription>
-                            Enter your email to sign in to your accounts
+                            Enter your credentials to access your account
                         </CardDescription>
                     </div>
                 </CardHeader>
@@ -41,6 +62,8 @@ export default function LoginPage() {
                                 id="email"
                                 placeholder="name@example.com"
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                                 className="h-11"
                             />
@@ -55,10 +78,15 @@ export default function LoginPage() {
                             <Input
                                 id="password"
                                 type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                                 className="h-11"
                             />
                         </div>
+                        {error && (
+                            <p className="text-sm text-destructive font-medium">{error}</p>
+                        )}
                         <Button type="submit" className="w-full h-11 text-base font-bold" disabled={loading}>
                             {loading ? (
                                 <>
@@ -74,7 +102,7 @@ export default function LoginPage() {
                 <CardFooter className="flex flex-col space-y-4 border-t bg-muted/20 p-6">
                     <div className="text-sm text-center text-muted-foreground">
                         Don't have an account?{" "}
-                        <Link href="#" className="text-primary font-bold hover:underline" onClick={(e) => { e.preventDefault(); handleLogin(e); }}>
+                        <Link href="#" className="text-primary font-bold hover:underline">
                             Start for Free
                         </Link>
                     </div>

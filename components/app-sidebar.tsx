@@ -11,7 +11,8 @@ import {
     Settings,
     LogOut,
     User,
-    Activity
+    Activity,
+    HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,6 +21,11 @@ const sidebarItems = [
         title: "Dashboard",
         href: "/dashboard",
         icon: LayoutDashboard,
+    },
+    {
+        title: "Practice Questions",
+        href: "/questions",
+        icon: HelpCircle,
     },
     {
         title: "Study Planner",

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlayCircle, Award, Target, Flame, Settings, User, Bell, Moon, Calendar } from "lucide-react";
+import { PlayCircle, Award, Target, Flame, Settings, User, Bell, Moon, Calendar, HelpCircle } from "lucide-react";
 import { useAuth } from "@/components/auth-context";
 import Link from "next/link";
 import {
@@ -215,11 +215,23 @@ export default function DashboardPage() {
                             <CardTitle className="text-base">Quick Actions</CardTitle>
                         </CardHeader>
                         <CardContent className="grid gap-2">
-                            <Button variant="ghost" className="w-full justify-start" onClick={() => alert("Calendar View coming in Phase Two!")}>
-                                <Calendar className="mr-2 h-4 w-4" /> View Calendar
-                            </Button>
-                            <Button variant="ghost" className="w-full justify-start" onClick={() => alert("Achievements coming shortly!")}>
-                                <Award className="mr-2 h-4 w-4" /> My Achievements
+                            <Link href="/dashboard/planner">
+                                <Button variant="ghost" className="w-full justify-start">
+                                    <Calendar className="mr-2 h-4 w-4" /> Study Planner
+                                </Button>
+                            </Link>
+                            <Link href="/questions">
+                                <Button variant="ghost" className="w-full justify-start">
+                                    <HelpCircle className="mr-2 h-4 w-4" /> Practice Questions
+                                </Button>
+                            </Link>
+                            <Link href="/dashboard/resources">
+                                <Button variant="ghost" className="w-full justify-start">
+                                    <PlayCircle className="mr-2 h-4 w-4" /> Study Resources
+                                </Button>
+                            </Link>
+                            <Button variant="ghost" className="w-full justify-start" onClick={() => setOpen(true)}>
+                                <Settings className="mr-2 h-4 w-4" /> Settings
                             </Button>
                         </CardContent>
                     </Card>

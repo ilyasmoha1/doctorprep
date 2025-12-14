@@ -13,8 +13,8 @@ test.describe('Get Started Flow & Settings', () => {
         await expect(page).toHaveURL(/\/login/);
 
         // 4. Fill Login (Mock)
-        await page.getByPlaceholder('name@example.com').fill('test@test.com');
-        await page.getByPlaceholder('password').fill('password');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
         await page.getByRole('button', { name: 'Sign In' }).click();
 
         // 5. Verify Dashboard
@@ -26,10 +26,16 @@ test.describe('Get Started Flow & Settings', () => {
         // 1. Go to Dashboard (Auth required, so we mock or login first)
         // For simplicity in this smoke test, we'll login again
         await page.goto('http://localhost:3000/login');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
         await page.getByRole('button', { name: 'Sign In' }).click();
 
+        // Wait for dashboard
+        await expect(page).toHaveURL(/\/dashboard/);
+
         // 2. Open Settings
-        await page.getByRole('button', { name: 'Settings' }).click(); // Gear icon might need name or aria-label
+        // Use the header settings button (icon)
+        await page.getByLabel('Settings').click();
 
         // 3. Toggle Dark Mode (Switch)
         // Note: shadcn switch is a button role usually
@@ -41,16 +47,80 @@ test.describe('Get Started Flow & Settings', () => {
         // 4. Save
         await page.getByRole('button', { name: 'Save Changes' }).click();
 
-        // 5. Refresh Page
-        await page.reload();
-
-        // 6. Verify Persistence
-        // Check if html has 'dark' class
+        // 4b. Verify Immediate Change
         const html = page.locator('html');
         if (isChecked === 'true') {
             await expect(html).not.toHaveClass(/dark/);
         } else {
             await expect(html).toHaveClass(/dark/);
         }
+
+        // 5. Refresh Page
+        await page.reload();
+
+        // 6. Verify Persistence
+        // Check if html has 'dark' class
+        // html already defined above
+        if (isChecked === 'true') {
+            await expect(html).not.toHaveClass(/dark/);
+        } else {
+            await expect(html).toHaveClass(/dark/);
+        }
+    });
+
+    test('Dashboard: Stats Display', async ({ page }) => {
+        // Login
+        await page.goto('http://localhost:3000/login');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Verify stats are visible
+        await expect(page.getByText('Daily Streak')).toBeVisible();
+        await expect(page.getByText('Questions Solved')).toBeVisible();
+        await expect(page.getByText('Accuracy')).toBeVisible();
+    });
+
+    test('Dashboard: Continue Learning Cards', async ({ page }) => {
+        // Login
+        await page.goto('http://localhost:3000/login');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Verify learning cards are visible
+        await expect(page.getByText('Continue Learning')).toBeVisible();
+        await expect(page.getByText('Cardiovascular System')).toBeVisible();
+        await expect(page.getByText('Neurology Basics')).toBeVisible();
+    });
+
+    test('Dashboard: Quick Actions', async ({ page }) => {
+        // Login
+        await page.goto('http://localhost:3000/login');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Verify quick actions section
+        await expect(page.getByText('Quick Actions')).toBeVisible();
+        await expect(page.getByRole('button', { name: /Study Planner/ })).toBeVisible();
+        await expect(page.getByRole('button', { name: /Practice Questions/ })).toBeVisible();
+    });
+
+    test('Sign Out Flow', async ({ page }) => {
+        // Login
+        await page.goto('http://localhost:3000/login');
+        await page.getByPlaceholder('name@example.com').fill('john@example.com');
+        await page.getByLabel('Password').fill('student123');
+        await page.getByRole('button', { name: 'Sign In' }).click();
+
+        // Verify we're on dashboard
+        await expect(page).toHaveURL(/\/dashboard/);
+
+        // Click sign out
+        await page.getByRole('button', { name: 'Sign Out' }).click();
+
+        // Verify redirect to home or login
+        await expect(page).toHaveURL(/\/(login)?$/);
     });
 });

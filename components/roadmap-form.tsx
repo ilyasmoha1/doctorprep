@@ -1,12 +1,14 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
 import { useFormStatus } from "react-dom"
 import { generateRoadmap, GenerateRoadmapState } from "@/app/actions/generate-roadmap"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useToast } from "@/components/ui/use-toast"
+import { trackEvent, AnalyticsEvents } from "@/lib/analytics"
 
 function SubmitButton() {
     const { pending } = useFormStatus()
@@ -18,9 +20,48 @@ function SubmitButton() {
 }
 
 export function RoadmapForm() {
+    const { toast } = useToast()
     const initialState: GenerateRoadmapState = { message: "", errors: {} }
     // @ts-ignore - types for useActionState might differ in React 19 / Canary compared to standard
     const [state, dispatch] = useActionState(generateRoadmap, initialState)
+
+    // Track analytics and show toasts based on state changes
+    useEffect(() => {
+        if (state.message) {
+            if (state.message.includes("Success")) {
+                // Track successful generation
+                trackEvent(AnalyticsEvents.ROADMAP_GENERATION_SUCCESS, {
+                    roadmapTitle: state.roadmap?.title,
+                    moduleCount: state.roadmap?.modules?.length,
+                })
+
+                // Show success toast
+                toast({
+                    title: "Roadmap Generated! 🎉",
+                    description: "Your personalized study plan is ready.",
+                })
+            } else if (state.message.includes("Error") || state.message.includes("Failed")) {
+                // Track failed generation
+                trackEvent(AnalyticsEvents.ROADMAP_GENERATION_FAILED, {
+                    error: state.message,
+                })
+
+                // Show error toast
+                toast({
+                    title: "Generation Failed",
+                    description: state.message,
+                    variant: "destructive",
+                })
+            }
+        }
+
+        // Track validation errors
+        if (state.errors && Object.keys(state.errors).length > 0) {
+            trackEvent(AnalyticsEvents.FORM_VALIDATION_ERROR, {
+                fields: Object.keys(state.errors),
+            })
+        }
+    }, [state, toast])
 
     return (
         <div className="space-y-8">
@@ -32,7 +73,14 @@ export function RoadmapForm() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form action={dispatch} className="space-y-4">
+                    <form action={(formData) => {
+                        // Track form submission
+                        trackEvent(AnalyticsEvents.ROADMAP_GENERATION_STARTED, {
+                            examDate: formData.get("examDate"),
+                            hoursPerDay: formData.get("hoursPerDay"),
+                        })
+                        dispatch(formData)
+                    }} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="examDate">Exam Date</Label>
                             <Input id="examDate" name="examDate" type="date" required />
@@ -73,12 +121,6 @@ export function RoadmapForm() {
                         <div className="pt-4">
                             <SubmitButton />
                         </div>
-
-                        {state.message && (
-                            <div className="p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
-                                {state.message}
-                            </div>
-                        )}
                     </form>
                 </CardContent>
             </Card>
